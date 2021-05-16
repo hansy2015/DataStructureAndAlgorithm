@@ -28,9 +28,9 @@ struct Student {
 
   bool operator< (const Student& other) const { // 分数越高的排名越靠前
     if (score < other.score) {
-      return true;
-    } else {
       return false;
+    } else {
+      return true;
     }
   }
 
