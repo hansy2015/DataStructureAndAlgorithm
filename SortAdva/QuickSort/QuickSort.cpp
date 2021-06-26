@@ -60,6 +60,5 @@ int main() {
 	assert(SortingHelper<int>::isSorted(arr, n));
 	clock_t endTime = clock();
 	printf("sort : %.7f s\n", double(endTime - startTime) / CLOCKS_PER_SEC);
-
 	return 0;
 }
