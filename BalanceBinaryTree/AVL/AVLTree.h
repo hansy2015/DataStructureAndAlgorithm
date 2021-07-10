@@ -48,9 +48,52 @@ public:
     return isBalanced(root);
   }
 
+
   
 
 private:
+  /*
+              y                                                          x
+            /  \                                                        / \
+          x     T4                                                     z    y
+        /  \             -------------------->                        / \   / \
+      z    T3                                                        T1  T2 T3 T4
+    /  \
+  T1   T2
+  */
+  Node* rightRotate(Node* y) {
+    Node* x = y->left;
+    Node* T3 = x->right;
+    // 向右旋转
+    x->right = y;
+    y->left = T3;
+    // 更新height
+    y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
+    x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
+
+    return x;
+  }
+  /*
+                y                                                               x
+              /  \                                                            /   \
+            T4    x                                                          y     z
+                /   \    ------------------->                              /  \   / \
+              T3     z                                                    T4  T3 T1  T2 
+                    / \
+                  T1  T2  
+  */
+  Node* leftRotate(Node* y) {
+    Node* x = y->right;
+    Node* T3 = x->left;
+    // 向左旋转
+    x->left = y;
+    y->right = T3;
+    // 更新height
+    x->height = max(getHeight(x->left), getHeight(x->right)) + 1;
+    y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
+
+    return x;
+  }
   bool isBalanced(Node* node) {
     if (node == nullptr) {
       return true;
@@ -96,8 +139,20 @@ private:
     } else {
       node->value = value;
     }
+    // 更新高度值
     node->height = 1 + max(getHeight(node->left), getHeight(node->right));
+    // 计算平衡因子
     int balanceFactor = getBalanceFactor(node);
+    // 平衡维护
+    // 左边的左边失去了平衡
+    
+    if (balanceFactor > 1 && getBalanceFactor(nod->left) >= 0) {
+      return rightRotate(node);
+    }
+    if (balanceFactor < -1 && getBalanceFactor(node->right) <= 0) {
+      return leftRotate(node);
+    }
+    
     return node;
   }
 
