@@ -49,6 +49,7 @@ public:
   }
 
 
+
   
 
 private:
@@ -93,6 +94,28 @@ private:
     y->height = max(getHeight(y->left), getHeight(y->right)) + 1;
 
     return x;
+  }
+  /*
+              y                                          y                               z
+            /   \                                      /  \                            /   \
+          x      T4                                   z   T4                          x     y
+        /   \         ------------->                /  \         ---------->        /  \   / \
+      T1     z                                     x   T3                          T1  T2  T3 T4 
+            / \                                  /  \
+           T2 T3                                T1  T2
+
+
+  */
+  Node* leftRightRotate(Node* y) {
+    Node* x = y->left;
+    y->left = leftRotate(x);
+    return rightRotate(y);
+  }
+
+  Node* rightLeftRotate(Node* y) {
+    Node* x = y->right;
+    y->right = rightRotate(x);
+    return leftRotate(y);
   }
   bool isBalanced(Node* node) {
     if (node == nullptr) {
@@ -146,13 +169,108 @@ private:
     // 平衡维护
     // 左边的左边失去了平衡
     
-    if (balanceFactor > 1 && getBalanceFactor(nod->left) >= 0) {
+    //LL
+    if (balanceFactor > 1 && getBalanceFactor(node->left) >= 0) {
       return rightRotate(node);
     }
+    //RR
     if (balanceFactor < -1 && getBalanceFactor(node->right) <= 0) {
       return leftRotate(node);
     }
+    //LR
+    if (balanceFactor > 1 && getBalanceFactor(node->left) < 0) {
+      return leftRightRotate(node);
+    }
+
+    //RL
+    if (balanceFactor < -1 && getBalanceFactor(node->right) > 0) {
+      return rightLeftRotate(node);
+    }
     
+    return node;
+  }
+
+  Node* remove(NOde* node, K key) {
+    if (node == nullptr) {
+      return nullptr;
+    }
+    Node* retNode;
+    if (key < node->key) {
+      node->left = remove(node->left);
+      retNode = node;
+    } else if (key > node->key) {
+      node->right = remove(node->right);
+      retNode = node;
+    } else {
+      if (node->left == nullptr) {
+        Node* rightNode = node->right;
+        node->right = nullptr;
+        size--;
+        retNode = rightNode;
+      }
+      if (node->right == nullptr) {
+        Node* leftNode = node->left;
+        node->left = nullptr;
+        size--;
+        retNode = leftNode;
+      }
+      if (node->left != nullptr && node->right != nullptr) {
+        Node* Min = minimum(node->right);
+        Node* successor = new Node(Min->key, Min->value);
+        successor->right = remove(node->right, successor->key);
+        successor->left = node->left;
+        node->left = node->right = nullptr;
+        retNode = successor;
+      }
+       
+    }
+    if (retNode == nullptr) {
+      return nullptr;
+    }
+    // 更新高度值
+    retNode->height = 1 + max(getHeight(retNode->left), getHeight(retNode->right));
+    // 计算平衡因子
+    int balanceFactor = getBalanceFactor(retNode);
+    // 平衡维护
+    // 左边的左边失去了平衡
+    
+    //LL
+    if (balanceFactor > 1 && getBalanceFactor(retNode->left) >= 0) {
+      return rightRotate(retNode);
+    }
+    //RR
+    if (balanceFactor < -1 && getBalanceFactor(retNode->right) <= 0) {
+      return leftRotate(retNode);
+    }
+    //LR
+    if (balanceFactor > 1 && getBalanceFactor(retNode->left) < 0) {
+      return leftRightRotate(retNode);
+    }
+
+    //RL
+    if (balanceFactor < -1 && getBalanceFactor(retNode->right) > 0) {
+      return rightLeftRotate(retNode);
+    }
+    
+    return retNode;
+
+  }
+
+  Node* minimum(Node* node) {
+    if (node->left == nullptr) {
+      return node;
+    }
+    return minimum(node->left);
+  }
+
+  Node* removeMin(Node* node) {
+    if (node->left == nullptr) {
+      Node* rightNode = node->right;
+      node->right = nullptr;
+      --size;
+      return rightNode;
+    }
+    node->left = removeMin(node->left);
     return node;
   }
 
