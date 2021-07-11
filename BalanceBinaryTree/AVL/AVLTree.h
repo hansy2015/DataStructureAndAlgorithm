@@ -181,7 +181,6 @@ private:
     if (balanceFactor > 1 && getBalanceFactor(node->left) < 0) {
       return leftRightRotate(node);
     }
-
     //RL
     if (balanceFactor < -1 && getBalanceFactor(node->right) > 0) {
       return rightLeftRotate(node);
