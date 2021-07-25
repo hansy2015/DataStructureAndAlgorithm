@@ -35,6 +35,14 @@ public:
     }
   }
 
+  void operator= (const AdjSet& adjset) {
+    this->V = adjset.getV();
+    this->E = adjset.getE();
+    for (int i = 0; i < V; i++) {
+      adj.push_back(adjset.Adj(i));
+    }
+  }
+
   int getV() {
     return V;
   }
@@ -52,9 +60,17 @@ public:
     assert(v >= 0 && v < V);
     return adj[v];
   }
+  
 
   int degree(int v) {
     return Adj(v).size();
+  }
+
+  void removeEdge(int v, int w) {
+    assert(v >= 0 && v < V);
+    assert(w >= 0 && w < V);
+    adj[v].erase(w);
+    adj[w].erase(v);
   }
 
 };
