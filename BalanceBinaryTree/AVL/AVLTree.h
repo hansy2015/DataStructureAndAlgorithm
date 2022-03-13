@@ -189,7 +189,7 @@ private:
     return node;
   }
 
-  Node* remove(NOde* node, K key) {
+  Node* remove(Node* node, K key) {
     if (node == nullptr) {
       return nullptr;
     }
